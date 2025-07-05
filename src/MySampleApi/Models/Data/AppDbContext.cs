@@ -1,4 +1,3 @@
-// MySampleApi/Data/AppDbContext.cs
 using Microsoft.EntityFrameworkCore;
 using MySampleApi.Models; // Required for the Item model
 

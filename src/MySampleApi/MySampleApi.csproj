@@ -19,6 +19,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <!-- New: Required for Azure Service Bus -->
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.17.5" />
   </ItemGroup>
 
 </Project>

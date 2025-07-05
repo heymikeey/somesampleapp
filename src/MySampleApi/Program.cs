@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore; // Required for Entity Framework Core
-using MySampleApi.Data; // Namespace for your DbContext
-using MySampleApi.Models; // Namespace for your data models
+using Microsoft.EntityFrameworkCore;
+using MySampleApi.Data;
+using MySampleApi.Models;
+using MySampleApi.Services; // Required for IServiceBusSenderService
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,26 +14,26 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Configure Entity Framework Core with SQL Server
-// The connection string will be read from appsettings.json or environment variables
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Register the Azure Service Bus sender service
+// The connection string and queue name will be read from configuration
+builder.Services.AddSingleton<IServiceBusSenderService, ServiceBusSenderService>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 
-    // In development, ensure the database is created and migrations are applied on startup
-    // In production, you might use a separate migration tool or process
-    using (var scope = app.Services.CreateScope())
-    {
-        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        dbContext.Database.Migrate(); // Applies any pending migrations
-    }
+// In development, ensure the database is created and migrations are applied on startup
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.Migrate();
 }
+
 
 app.UseHttpsRedirection();
 
