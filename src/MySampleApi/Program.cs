@@ -19,7 +19,25 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Register the Azure Service Bus sender service
 // The connection string and queue name will be read from configuration
-builder.Services.AddSingleton<IServiceBusSenderService, ServiceBusSenderService>();
+builder.Services.AddSingleton<IServiceBusSenderService>(provider =>
+{
+    var configuration = provider.GetRequiredService<IConfiguration>();
+    var logger = provider.GetRequiredService<ILogger<ServiceBusSenderService>>();
+
+    var serviceBusConnectionString = configuration["AzureServiceBus:ConnectionString"];
+    var serviceBusQueueName = configuration["AzureServiceBus:QueueName"];
+
+    if (string.IsNullOrEmpty(serviceBusConnectionString))
+    {
+        throw new InvalidOperationException("Azure Service Bus ConnectionString is not configured. Please set this environment variable.");
+    }
+    if (string.IsNullOrEmpty(serviceBusQueueName))
+    {
+        throw new InvalidOperationException("Azure Service Bus QueueName is not configured. Please set this environment variable.");
+    }
+
+    return new ServiceBusSenderService(configuration, logger);
+});
 
 var app = builder.Build();
 
@@ -35,7 +53,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
