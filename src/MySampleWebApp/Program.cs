@@ -59,6 +59,6 @@ app.MapControllers(); // Maps API controller routes (e.g., /api/proxy)
 // IMPORTANT: This is where the Angular app will be served.
 // This ensures that any unmatched routes are handled by Angular's index.html.
 // This must come AFTER MapControllers() so API routes are handled first.
-app.MapFallbackToFile("index.html"); // Serves index.html for any unmatched routes (for SPA routing)
+app.MapFallbackToFile("/sampleapp/{*path:nonfile}", "sampleapp/index.html");
 
 app.Run();

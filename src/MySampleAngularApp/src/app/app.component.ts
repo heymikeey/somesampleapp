@@ -40,7 +40,7 @@ export class AppComponent implements OnInit {
 
   // Calls the /api/proxy/hello endpoint on the ASP.NET Core host
   getHelloMessage(): void {
-    this.http.get('/api/proxy/hello', { responseType: 'text' }).subscribe({
+    this.http.get('/sampleapp/api/proxy/hello', { responseType: 'text' }).subscribe({
       next: (data) => {
         this.apiHelloMessage = data;
         console.log('API Hello Message:', data);
@@ -54,7 +54,7 @@ export class AppComponent implements OnInit {
 
   // Calls the /api/proxy/hello/items endpoint to get all items
   getItems(): void {
-    this.http.get<Item[]>('/api/proxy/hello/items').subscribe({
+    this.http.get<Item[]>('/sampleapp/api/proxy/hello/items').subscribe({
       next: (data) => {
         this.items = data;
         console.log('Fetched Items:', data);
@@ -77,7 +77,7 @@ export class AppComponent implements OnInit {
       description: this.newItemDescription
     };
 
-    this.http.post<Item>('/api/proxy/hello/items', newItem).subscribe({
+    this.http.post<Item>('/sampleapp/api/proxy/hello/items', newItem).subscribe({
       next: (addedItem) => {
         console.log('Item added:', addedItem);
         this.items.push(addedItem); // Add the new item to the local list
@@ -100,7 +100,7 @@ export class AppComponent implements OnInit {
     }
 
     // The API expects a raw string in the body, so we send it directly
-    this.http.post('/api/proxy/hello/send-message', `"${this.serviceBusMessageContent}"`, {
+    this.http.post('/sampleapp/api/proxy/hello/send-message', `"${this.serviceBusMessageContent}"`, {
       headers: { 'Content-Type': 'application/json' }, // Explicitly set content type for raw string body
       responseType: 'text' // Expect a plain text response
     }).subscribe({
